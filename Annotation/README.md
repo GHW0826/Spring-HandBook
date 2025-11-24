@@ -16,7 +16,12 @@
 ### [JPA](JPA/)
 - Class-Level
   - `@Entity` : JPA에서 이 클래스를 테이블과 매핑되는 엔티티로 인식하도록 표시하는 어노테이션
-
+  - `@MappedSuperclass` : 
+  - `@Embeddable` : 
+  - `@IdClass` : 
+  - `@Cacheable` :
+  - `@EntityListeners` :
+  - `@NamedQuery` : 
 
 - Field-Level
   - `@SequenceGenerator` :
