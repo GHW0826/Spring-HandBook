@@ -36,6 +36,7 @@
  
 - BeanFactory라고 말할 때는 빈을 생성하고 관계를 설정하는 IoC의 기본 기능에 초점을 맞춘 것이고,
   ApplicationContext는 별도의 정보를 참고해서 빈의 생성, 관계 설정 등의 제어를 총괄하는 것에 초점을 맞춘 것.
+<br>
 
 ## BeanDefinition
 스프링은 Bean을 그냥 바로 New하지 않고 설계도 메타정보의 BeanDefinition을 먼저 만듦.
@@ -47,35 +48,37 @@
   -  initMethod / destoryMethod
 이 BeanDefinition이 BeanFactory(DefaultListableBeanFactory)에 등록.
 <br>
-등록되는 경로는 크게 3가지
-  1. @ComponentScan으로 찾은 클래스 (@Component, @Service, @Repository, @Controller 등)
-  2. @Configuration 클래스 안의 @Bean 메서드
-  3. XML / JavaConfig에서 수동 등록
+등록되는 경로는 크게 3가지<br>
+1. @ComponentScan으로 찾은 클래스 (@Component, @Service, @Repository, @Controller 등)<br>
+2. @Configuration 클래스 안의 @Bean 메서드<br>
+3. XML / JavaConfig에서 수동 등록<br>
 <br><br>
+
 ## Bean 생성, DI
 스프링이 Bean을 실제로 쓰려고 할 때.
-1. 해당 BeanName에 대한 BeanDefinition 조회
-2. 생성자 결정
-  - @Autowired 붙은 생성자
-  - 생성자가 하나뿐이면 그것 사용
-  - 그렇지 않으면 기본 생성자
-3. 생성자 파라미터에 주입할 Bean들 먼저 생성(재귀)
-4. New를 통해 Bean 인스턴스 생성
-5. 그 후, 필드/세터 주입 처리
-  - @Autowired, @Value, @Qualifier 등.
+1. 해당 BeanName에 대한 BeanDefinition 조회<br>
+2. 생성자 결정<br>
+    - @Autowired 붙은 생성자
+    - 생성자가 하나뿐이면 그것 사용
+    - 그렇지 않으면 기본 생성자
+3. 생성자 파라미터에 주입할 Bean들 먼저 생성(재귀)<br>
+4. New를 통해 Bean 인스턴스 생성<br>
+5. 그 후, 필드/세터 주입 처리<br>
+    - @Autowired, @Value, @Qualifier 등.
 <br><br>
+
 ## Bean LifeCycle Callback
 1. 객체 생성 (생성자 호출)
 2. 의존성 주입 롼료
 3. 초기화 단계
-  - @PostContruct 메서드 호출
-  - InitializingBean#afterPropertiesSet() (Legacy)
-  - @Bean(initMethod = "init") 지성 시 init() 호출
+    - @PostContruct 메서드 호출
+    - InitializingBean#afterPropertiesSet() (Legacy)
+    - @Bean(initMethod = "init") 지성 시 init() 호출
 4. 애플리케이션 동작 중
 5. 컨텍스트 종료시 (Context.close())
-  - @PreDestroy 메서드 호출
-  - DisposableBean#destroy() 호출
-  - @Bean(destroyMethod = "close") 지정 시 close() 호출
+    - @PreDestroy 메서드 호출
+    - DisposableBean#destroy() 호출
+    - @Bean(destroyMethod = "close") 지정 시 close() 호출
 <br><br>
 
 ## @ComponentScan, @Configuration, @Bean 처리 과정
@@ -88,19 +91,20 @@ public class AppConfig {
 ```
 1. 스프링은 @ComponentScan이 붙은@Configuration 클래스를 먼저 BeanDefinition으로 등록
 
- 
+<br>
+
 ## Bean 생성 → 의존성 주입 → 라이프사이클 전체 흐름
 스프링 부팅 (SpringApplication.run(..)) 순서
 
 1. ApplicatioNContext 생성
 2. Bean 정의 읽기 및 등록
-  - @ComponentScan, @Configuratin, @Bean 등으로부터 BeanDefinition 생성
+    - @ComponentScan, @Configuratin, @Bean 등으로부터 BeanDefinition 생성
 3. BeanFactoryPostProcessor / ConfigurationClassPostProcessor 실행
-  - @Configuration 분석, @Bean 메서드 스캔, 추가 BeanDefinition 등록
+    - @Configuration 분석, @Bean 메서드 스캔, 추가 BeanDefinition 등록
 4. Bean 인스턴스 생성 + 의존성 주입 (DI)
-  - 생성자 주입, 필드 주입, setter 주입
+    - 생성자 주입, 필드 주입, setter 주입
 5. 라이프사이클 콜백 호출
-  - @PostConstruct, @InitializingBean#afterPropertiesSet, initMethod 등
+    - @PostConstruct, @InitializingBean#afterPropertiesSet, initMethod 등
 6. AOP 프록시 적용
-  - @Transactional, @Async 등 -> 실제 Bean 대신 Proxy 등록
+    - @Transactional, @Async 등 -> 실제 Bean 대신 Proxy 등록
 7.애플리케이션 준비 완료
