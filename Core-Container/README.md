@@ -90,6 +90,65 @@ public class AppConfig {
 }
 ```
 1. 스프링은 @ComponentScan이 붙은@Configuration 클래스를 먼저 BeanDefinition으로 등록
+2. ComponentScanAnnotationParser 같은 내부 컴포넌트가 basePackages 경로를 스캔
+3. 클래스패스 상에서.class 파일들을 흝으면서
+    - @Component
+    - @Service
+    - @Repository
+    - @Controller
+    - @Configuration
+      등 메타 어노테이션을 찾음.
+4. 찾은 클래스마다 BeanDefinition 생성 후 BeanFactory에 등록
+    - Bean 이름은 기본적으로 클래스명에서 앞글자 소문자 (ex. OrderServie -> orderserice)
+    - 필요 시 @Component("customName") 으로 이름 지정 가
+  - @ComponentScan은 어떤 클래스를 Bean으로 쓸 것이닞 자동 탐색 후 BeanDefinition을 등록하는 단계
+<br>
+
+- @Configuration 처리 과정 (CGLIB Proxy)
+```java
+@Configuration
+public class AppConfig {
+
+    @Bean
+    public MemberService memberService() {
+        return new MemberServiceImpl(memberRepository());
+    }
+
+    @Bean
+    public MemberRepository memberRepository() {
+        return new MemoryMemberRepository();
+    }
+}
+```
+@Configuration 클래스는 자기 자신도 Bean, but 순수 Java 객체로 쓰지 않고 스프링이 CGLIB로 프록시 클래스를 만들어서 등록.<br>
+memberService()를 호출할 때마다 new MemberServiceImpl(memberRepository())를 직접 호출하면 memberRepository()가 매번 새로 만들어질 수 있음<br>
+스프링은 싱글톤 보장을 위해 아래처럼 동작.
+1. @Configuration 클래스를 상속한 CGLIB 서브클래스를 만듦 (아래 느낌)
+```java
+public class AppConfig$$EnhancerBySpringCGLIB extends AppConfig {
+    private MemberRepository memberRepositorySingleton;
+
+    @Override
+    public MemberRepository memberRepository() {
+        if (memberRepositorySingleton == null) {
+            memberRepositorySingleton = super.memberRepository();
+        }
+        return memberRepositorySingleton;
+    }
+
+    @Override
+    public MemberService memberService() {
+        // 여기서도 super.memberService() 대신
+        // 이미 캐싱된 memberRepositorySingleton 사용되도록 제어
+    }
+}
+```
+2. 스프링 컨테이너는 AppConfig 원본 대신 이 프록시 클래스를 Bean으로 등록
+3. 그래서 memberRepository()를 여러 번 호출해도 같은 Bean 인스턴스를 반환하게 됨
+
+@Configuration은
+@Bean 메서드 호출을 가로채서 이미 컨테이너에 등록된 Bean이면 그걸 반환하고, 없으면 새로 만들어 등록 후 그걸 반환<br>
+이 프록시 구조로 @Configuration 클래스는 항상 CGLIB Proxy로 등록되는 게 기
 
 <br>
 
