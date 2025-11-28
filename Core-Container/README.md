@@ -1,4 +1,3 @@
-# IoC 컨테이너 / BeanFactory / ApplicationContext
 
 # IOC/DI
 - IOC
@@ -17,11 +16,24 @@
     - 필드 주입
     - Setter(수정자) 주
 
-- Spring Container
-  - Spring Application 내에서 자바 객체를 관리하는 공간.
-  - 자바 객체를 Bean이라고 부름
-  - 컨테이너의 역할은 의존성 주입(DI, Dependency Injection)을 통하여 Application을 구성하는 Bean들의 생명주기를 개발자 대신 관리함
+# Spring Container
+- Spring Application 내에서 자바 객체를 관리하는 공간.
+- 자바 객체를 Bean이라고 부름
+- 컨테이너의 역할은 의존성 주입(DI, Dependency Injection)을 통하여 Application을 구성하는 Bean들의 생명주기를 개발자 대신 관리함
 
-  - 스프링 컨테이너의 종류는 크게 2가지
-    - BeanFactory
-    - ApplicationContext
+- 스프링 컨테이너의 종류는 크게 2가지
+  - BeanFactory
+  - ApplicationContext
+
+# BeanFactory / ApplicationContext
+- BeanFactory
+  - 빈을 생성하고 의존관계를 설정하는 기능을 담당하는 가장 기본적인 IoC 컨테이너, 클래스
+  - DI 엔진만 있는 미니멀 컨테이너
+
+- ApplicationContext
+  - ApplicationContext는 BeanFactory를 구현하고 있어 BeanFactory의 확장된 버전이라고 생각.
+  - 실무에 필요한 기능을 포함한 스프링 컨테이너
+ 
+- BeanFactory라고 말할 때는 빈을 생성하고 관계를 설정하는 IoC의 기본 기능에 초점을 맞춘 것이고,
+  ApplicationContext는 별도의 정보를 참고해서 빈의 생성, 관계 설정 등의 제어를 총괄하는 것에 초점을 맞춘 것.
+  
